@@ -2,20 +2,20 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
+	// "fmt"
 	"github.com/gorilla/mux"
-	"math/rand"
+	"log"
+	// "math/rand"
 	"net/http"
-	"strconv"
+	// "strconv"
 )
 
-// Post Struct (Model)
+// Book Struct (Model)
 
-type Post struct {
-	ID     string `json:"id"`
-	Isbn   string `json:"isbn"`
-	Title  string `json:"title"`
-	Author string `json:"author"`
+type Book struct {
+	ID     string  `json:"id"`
+	Title  string  `json:"title"`
+	Author *Author `json:"author"`
 }
 
 type Author struct {
@@ -23,9 +23,13 @@ type Author struct {
 	LastName  string `json:"lastname"`
 }
 
+// Init Books var as a slice Book struct
+var books []Book
+
 // Get All Books
 func getBooks(w http.ResponseWriter, r *http.Request) {
-
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(books)
 }
 
 // Get Single Book
@@ -52,12 +56,16 @@ func main() {
 	// Initiate Router
 	r := mux.NewRouter()
 
+	// Mock Data
+	books = append(books, Book{ID: "1", Title: "Book one", Author: &Author{FirstName: "Philip", LastName: "Williams"}})
+	books = append(books, Book{ID: "2", Title: "Book Two", Author: &Author{FirstName: "John", LastName: "Johnson"}})
+
 	// Route Hnadlers / Endpoints
-	r.HandleFunc("/api/posts", getPosts).Methods("GET")
-	r.HandleFunc("/api/posts/{id}", getPost).Methods("GET")
-	r.HandleFunc("/api/posts/", createBook).Methods("POST")
-	r.HandleFunc("/api/posts/{id}", updatePost).Methods("PUT")
-	r.HandleFunc("/api/posts/{id}", deletePost).Methods("DELETE")
+	r.HandleFunc("/api/books", getBooks).Methods("GET")
+	r.HandleFunc("/api/books/{id}", getBook).Methods("GET")
+	r.HandleFunc("/api/books/", createBook).Methods("Book")
+	r.HandleFunc("/api/books/{id}", updateBook).Methods("PUT")
+	r.HandleFunc("/api/books/{id}", deleteBook).Methods("DELETE")
 
 	log.Fatal(http.ListenAndServe(":8000", r))
 }
