@@ -53,7 +53,7 @@ func createBook(w http.ResponseWriter, r *http.Request) {
 
 	var book Book
 	_ = json.NewDecoder(r.Body).Decode(&book)
-	book.ID = strconv.Itoa(rand.Intn(1000000)) // Mock ID - not safe in production
+	book.ID = strconv.Itoa(rand.Intn(10000)) // Mock ID - not safe in production
 	books = append(books, book)
 	json.NewEncoder(w).Encode(book)
 }
@@ -79,7 +79,7 @@ func main() {
 	// Route Hnadlers / Endpoints
 	r.HandleFunc("/api/books", getBooks).Methods("GET")
 	r.HandleFunc("/api/books/{id}", getBook).Methods("GET")
-	r.HandleFunc("/api/books/", createBook).Methods("Book")
+	r.HandleFunc("/api/books", createBook).Methods("POST")
 	r.HandleFunc("/api/books/{id}", updateBook).Methods("PUT")
 	r.HandleFunc("/api/books/{id}", deleteBook).Methods("DELETE")
 
